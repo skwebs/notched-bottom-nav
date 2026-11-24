@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notched Bottom Tabs</title>
+  <style>
+    :root {
+      --bg-top: #f3e8ff;
+      --bg-bottom: #f8fafc;
+      --surface: #ffffff;
+      --text-main: #1e1b4b;
+      --text-muted: #64748b;
+      --accent: #7c3aed;
+      --accent-light: #a78bfa;
+      --border: rgba(124, 58, 237, 0.14);
+      --shadow: 0 10px 30px -10px rgba(76, 29, 149, 0.14);
+      --shadow-hover: 0 20px 40px -12px rgba(124, 58, 237, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: 2rem 1.25rem;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(167, 139, 250, 0.35), transparent 55%),
+        linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+    }
+
+    main {
+      width: 100%;
+      max-width: 720px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.35rem 0.85rem;
+      margin-bottom: 0.85rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(124, 58, 237, 0.1);
+      border-radius: 999px;
+    }
+
+    h1 {
+      font-size: clamp(1.75rem, 4vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      margin-bottom: 2.25rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      text-decoration: none;
+      color: inherit;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+      border-color: rgba(124, 58, 237, 0.35);
+    }
+
+    .card:active {
+      transform: scale(0.98);
+    }
+
+    .card:focus-visible {
+      outline: 3px solid var(--accent-light);
+      outline-offset: 3px;
+    }
+
+    .preview {
+      height: 120px;
+      border-radius: 14px;
+      border: 1px solid rgba(124, 58, 237, 0.15);
+      margin-bottom: 1.1rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      overflow: hidden;
+      background: linear-gradient(180deg, #ede9fe 0%, #ddd6fe 100%);
+      position: relative;
+    }
+
+    .preview svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.35rem;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .arrow {
+      display: inline-grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(124, 58, 237, 0.09);
+      color: var(--accent);
+      font-size: 1rem;
+      transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+    }
+
+    .card:hover .arrow {
+      transform: translateX(3px);
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .card-desc {
+      font-size: 0.88rem;
+      line-height: 1.45;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <span class="badge">UI Showcase</span>
+    <h1>Notched Bottom Tabs</h1>
+    <p class="subtitle">Select a navigation bar style to preview</p>
+
+    <div class="grid">
+      <!-- Fixed Bottom Variant -->
+      <a class="card" href="fixed-bottom">
+        <div class="preview" aria-hidden="true">
+          <svg viewBox="0 0 280 86" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 36 H113 A27 27 0 0 0 167 36 H280 V86 H0 Z" fill="#FFFFFF"/>
+            <circle cx="140" cy="36" r="22" fill="url(#fab1)"/>
+            <path d="M140 27 V45 M131 36 H149" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"/>
+            <circle cx="42" cy="61" r="5" fill="#7C3AED"/>
+            <circle cx="84" cy="61" r="5" fill="#CBD5E1"/>
+            <circle cx="196" cy="61" r="5" fill="#CBD5E1"/>
+            <circle cx="238" cy="61" r="5" fill="#CBD5E1"/>
+            <defs>
+              <linearGradient id="fab1" x1="118" y1="14" x2="162" y2="58" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#9333EA"/>
+                <stop offset="1" stop-color="#6D28D9"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="card-header">
+          <span class="card-title">Fixed Bottom</span>
+          <span class="arrow">&rarr;</span>
+        </div>
+        <p class="card-desc">Edge-to-edge docked navigation bar with a centered circular cutout.</p>
+      </a>
+
+      <!-- Floating Bottom Variant -->
+      <a class="card" href="floating-bottom">
+        <div class="preview" aria-hidden="true">
+          <svg viewBox="0 0 280 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M38 34 H113 A27 27 0 0 0 167 34 H242 A23 23 0 0 1 242 80 H38 A23 23 0 0 1 38 34 Z" fill="#FFFFFF"/>
+            <circle cx="140" cy="34" r="22" fill="url(#fab2)"/>
+            <path d="M140 25 V43 M131 34 H149" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"/>
+            <circle cx="52" cy="57" r="5" fill="#7C3AED"/>
+            <circle cx="90" cy="57" r="5" fill="#CBD5E1"/>
+            <circle cx="190" cy="57" r="5" fill="#CBD5E1"/>
+            <circle cx="228" cy="57" r="5" fill="#CBD5E1"/>
+            <defs>
+              <linearGradient id="fab2" x1="118" y1="12" x2="162" y2="56" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#9333EA"/>
+                <stop offset="1" stop-color="#6D28D9"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="card-header">
+          <span class="card-title">Floating Bottom</span>
+          <span class="arrow">&rarr;</span>
+        </div>
+        <p class="card-desc">Detached pill-shaped navigation bar floating above the bottom edge.</p>
+      </a>
+    </div>
+  </main>
+</body>
+</html>

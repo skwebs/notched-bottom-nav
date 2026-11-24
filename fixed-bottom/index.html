@@ -1,0 +1,1025 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#17142f">
+  <title>Gradient Bottom Navigation</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #fff;
+      --muted: rgba(255,255,255,.68);
+      --glass: rgba(20, 17, 48, .56);
+      --line: rgba(255,255,255,.13);
+      --purple: #7444d5;
+      --pink: #d94eae;
+      --nav-height: 82px;
+      --page-bg:
+        radial-gradient(ellipse at 12% 12%, rgba(255, 119, 184, .55), transparent 34%),
+        radial-gradient(ellipse at 88% 22%, rgba(91, 94, 235, .62), transparent 38%),
+        radial-gradient(ellipse at 50% 100%, rgba(117, 58, 190, .78), transparent 48%),
+        linear-gradient(145deg, #28194d 0%, #25245f 48%, #101b3e 100%);
+      --header-bg: linear-gradient(110deg, rgba(52, 34, 91, .94), rgba(39, 43, 105, .88));
+      --header-border: rgba(255,255,255,.13);
+      --surface: rgba(255,255,255,.10);
+      --surface-border: rgba(255,255,255,.22);
+      --surface-soft: rgba(255,255,255,.07);
+      --surface-soft-border: rgba(255,255,255,.12);
+      --nav-bg: rgba(19, 16, 46, .96);
+      --nav-border: rgba(255,255,255,.22);
+      --text-main: #fff;
+      --text-muted: rgba(255,255,255,.68);
+      --text-soft: rgba(255,255,255,.62);
+      --link-color: #e4c7ff;
+      --eyebrow-color: #f0c7ff;
+      --icon-tint: #f4d9ff;
+      --activity-divider: rgba(255,255,255,.11);
+      --card-shadow: 0 20px 60px rgba(8, 7, 30, .16);
+      --nav-shadow: 0 12px 34px rgba(5, 4, 25, .38), 0 0 0 1px rgba(255,255,255,.035), inset 0 1px rgba(255,255,255,.12);
+    }
+
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --ink: #261b3b;
+      --muted: rgba(38,27,59,.70);
+      --glass: rgba(255,255,255,.68);
+      --line: rgba(74,53,112,.15);
+      --page-bg:
+        radial-gradient(ellipse at 12% 10%, rgba(246, 170, 220, .68), transparent 36%),
+        radial-gradient(ellipse at 88% 22%, rgba(160, 168, 255, .70), transparent 40%),
+        radial-gradient(ellipse at 48% 100%, rgba(207, 177, 255, .72), transparent 48%),
+        linear-gradient(145deg, #fff7ff 0%, #f0edff 52%, #e7edff 100%);
+      --header-bg: linear-gradient(110deg, rgba(255,249,255,.94), rgba(239,240,255,.92));
+      --header-border: rgba(74,53,112,.14);
+      --surface: rgba(255,255,255,.64);
+      --surface-border: rgba(92,72,133,.20);
+      --surface-soft: rgba(255,255,255,.48);
+      --surface-soft-border: rgba(92,72,133,.14);
+      --nav-bg: rgba(255,255,255,.90);
+      --nav-border: rgba(92,72,133,.20);
+      --text-main: #261b3b;
+      --text-muted: rgba(38,27,59,.70);
+      --text-soft: rgba(38,27,59,.62);
+      --link-color: #673ab7;
+      --eyebrow-color: #7042aa;
+      --icon-tint: #673ab7;
+      --activity-divider: rgba(92,72,133,.14);
+      --card-shadow: 0 18px 48px rgba(74,53,112,.12);
+      --nav-shadow: 0 12px 34px rgba(74,53,112,.18), 0 0 0 1px rgba(92,72,133,.05), inset 0 1px rgba(255,255,255,.9);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    body {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text-main);
+      background: var(--page-bg);
+    }
+
+    button { font: inherit; }
+
+    .app {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior-y: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: calc(66px + env(safe-area-inset-top, 0px)) 0 calc(190px + env(safe-area-inset-bottom, 0px));
+      background: transparent;
+      isolation: isolate;
+    }
+
+    .app::-webkit-scrollbar {
+      display: none;
+    }
+
+    .app::before,
+    .app::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      border-radius: 50%;
+      filter: blur(2px);
+      pointer-events: none;
+    }
+
+    .app::before {
+      width: 280px;
+      height: 280px;
+      top: 24%;
+      right: -150px;
+      background: rgba(255,255,255,.08);
+    }
+
+    .app::after {
+      width: 220px;
+      height: 220px;
+      left: -125px;
+      bottom: 20%;
+      background: var(--surface-soft);
+    }
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: calc(66px + env(safe-area-inset-top, 0px));
+      padding: env(safe-area-inset-top, 0px) 20px 0;
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--header-border);
+      box-shadow: 0 8px 30px rgba(8, 5, 30, .16);
+      backdrop-filter: blur(26px) saturate(145%);
+      -webkit-backdrop-filter: blur(26px) saturate(145%);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-main);
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: .15px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.24);
+      border-radius: 15px;
+      color: #fff;
+      background: linear-gradient(145deg, rgba(255,255,255,.19), rgba(255,255,255,.07));
+      box-shadow: inset 0 1px rgba(255,255,255,.16), 0 5px 16px rgba(10,5,35,.12);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .top-action {
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 16px;
+      color: white;
+      background: linear-gradient(145deg, rgba(255,255,255,.17), rgba(255,255,255,.07));
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 1px rgba(255,255,255,.13), 0 5px 16px rgba(10,5,35,.10);
+      cursor: pointer;
+      transition: background .2s ease, transform .2s ease;
+    }
+
+
+    :root[data-theme="light"] body {
+      color: var(--text-main);
+    }
+
+    :root[data-theme="light"] .brand-mark,
+    :root[data-theme="light"] .top-action {
+      color: #5c359b;
+      border-color: rgba(92,53,155,.20);
+      background: linear-gradient(145deg, rgba(255,255,255,.92), rgba(242,235,255,.72));
+      box-shadow: inset 0 1px rgba(255,255,255,.95), 0 5px 16px rgba(74,53,112,.10);
+    }
+
+    :root[data-theme="light"] .eyebrow {
+      color: var(--eyebrow-color);
+    }
+
+    :root[data-theme="light"] .feature-card {
+      background: linear-gradient(135deg, rgba(159,104,239,.16), rgba(255,255,255,.78));
+      border-color: var(--surface-border);
+    }
+
+    :root[data-theme="light"] .toast {
+      border-color: var(--surface-border);
+    }
+
+    :root[data-theme="light"] .trend {
+      color: #176b4c;
+      background: rgba(40,180,125,.14);
+    }
+
+    :root[data-theme="light"] .nav-item.active svg {
+      filter: drop-shadow(0 0 6px rgba(103,58,183,.22));
+    }
+
+    :root[data-theme="light"] .quick-icon {
+      color: #673ab7;
+      background: rgba(126,87,194,.12);
+    }
+
+    :root[data-theme="light"] .activity-dot {
+      background: #9a5bda;
+      box-shadow: 0 0 12px rgba(154,91,218,.28);
+    }
+
+    :root[data-theme="light"] .feature-card {
+      background: linear-gradient(135deg, rgba(159,104,239,.18), rgba(255,255,255,.72));
+    }
+
+    :root[data-theme="light"] .toast {
+      color: #261b3b;
+      background: rgba(255,255,255,.96);
+      border-color: rgba(92,72,133,.18);
+      box-shadow: 0 12px 35px rgba(74,53,112,.16);
+    }
+
+    .theme-toggle {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 16px;
+      color: #fff;
+      background: linear-gradient(145deg, rgba(255,255,255,.17), rgba(255,255,255,.07));
+      box-shadow: inset 0 1px rgba(255,255,255,.13), 0 5px 16px rgba(10,5,35,.10);
+      cursor: pointer;
+      transition: transform .2s ease, background .2s ease, color .2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .theme-toggle:active { transform: scale(.93); }
+
+    .theme-toggle svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    :root[data-theme="light"] .theme-toggle {
+      color: #673ab7;
+      border-color: rgba(92,53,155,.20);
+      background: linear-gradient(145deg, rgba(255,255,255,.92), rgba(242,235,255,.72));
+      box-shadow: inset 0 1px rgba(255,255,255,.95), 0 5px 16px rgba(74,53,112,.10);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .topbar, .content-card, .bottom-nav, .top-action, .brand-mark {
+      transition: background-color .22s ease, color .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+
+    .top-action:active {
+      transform: scale(.94);
+      background: rgba(255,255,255,.22);
+    }
+
+    main {
+      width: min(calc(100% - 40px), 680px);
+      margin: clamp(38px, 8vh, 76px) auto 40px;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: #f0c7ff;
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: 2.4px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 540px;
+      margin: 0;
+      font-size: clamp(38px, 8vw, 66px);
+      line-height: .99;
+      letter-spacing: -2.8px;
+    }
+
+    .intro {
+      max-width: 440px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .content-card {
+      margin-top: 38px;
+      padding: 22px;
+      border: 1px solid var(--surface-border);
+      border-radius: 24px;
+      background: var(--surface);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .card-label {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .card-value {
+      margin: 7px 0 0;
+      font-size: 27px;
+      font-weight: 750;
+      letter-spacing: -.7px;
+    }
+
+    .trend {
+      padding: 8px 11px;
+      border-radius: 999px;
+      color: #c9ffe7;
+      background: rgba(69, 220, 157, .13);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .bars {
+      height: 92px;
+      margin-top: 26px;
+      display: flex;
+      align-items: end;
+      gap: 9px;
+    }
+
+    .bars span {
+      flex: 1;
+      min-width: 5px;
+      height: var(--h);
+      border-radius: 8px 8px 3px 3px;
+      background: linear-gradient(180deg, #f4b4ff, #9161ed);
+      opacity: .9;
+    }
+
+    .bottom-nav-wrap {
+      --bar-height: 70px;
+      --disc-size: 66px;
+      --notch-size: 82px;
+      --accent: #673ab7;
+
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 2000;
+      width: 100%;
+      max-width: none;
+      height: calc(var(--bar-height) + env(safe-area-inset-bottom, 0px));
+      padding: 0;
+      pointer-events: none;
+    }
+
+    /* Full-width bottom bar, attached to the screen edge.
+       The circular opening keeps the page visible around the unchanged FAB. */
+    .bottom-nav-wrap::before {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      left: 50%;
+      width: var(--notch-size);
+      height: var(--notch-size);
+      transform: translate(-50%, -50%);
+      border: 1px solid var(--nav-border);
+      border-radius: 50%;
+      clip-path: inset(50% 0 0 0);
+      pointer-events: none;
+    }
+
+    .bottom-nav {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0 16px env(safe-area-inset-bottom, 0px);
+      display: grid;
+      grid-template-columns: 1fr 1fr var(--notch-size) 1fr 1fr;
+      align-items: stretch;
+      border: 1px solid var(--nav-border);
+      border-left: 0;
+      border-right: 0;
+      border-bottom: 0;
+      border-radius: 0;
+      background: var(--nav-bg);
+      box-shadow: var(--nav-shadow);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      pointer-events: auto;
+
+      -webkit-mask-image: radial-gradient(
+        circle at 50% 0,
+        transparent calc(var(--notch-size) / 2 - .5px),
+        #000 calc(var(--notch-size) / 2)
+      );
+      mask-image: radial-gradient(
+        circle at 50% 0,
+        transparent calc(var(--notch-size) / 2 - .5px),
+        #000 calc(var(--notch-size) / 2)
+      );
+    }
+
+    .nav-item {
+      height: 100%;
+      min-width: 0;
+      padding: 6px 2px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      border: 0;
+      border-radius: 18px;
+      color: var(--text-soft);
+      background: transparent;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: color .18s ease, transform .18s ease;
+    }
+
+    .nav-item svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .nav-item span {
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 600;
+      letter-spacing: .1px;
+    }
+
+    .nav-item.active { color: var(--text-main); }
+    .nav-item.active svg { filter: drop-shadow(0 0 7px rgba(220,174,255,.7)); }
+    .nav-item:active { transform: scale(.92); }
+    .nav-item:focus-visible,
+    .top-action:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+    .tab-spacer { pointer-events: none; }
+
+    /*
+      The FAB is a SIBLING of .bottom-nav, not a child.
+      Therefore the notch mask cannot clip the purple disc or its transparent plus.
+    */
+    .create-button {
+      position: absolute;
+      z-index: 3;
+      top: 0;
+      left: 50%;
+      width: var(--disc-size);
+      height: var(--disc-size);
+      transform: translate(-50%, -50%);
+      padding: 0;
+      display: block;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      cursor: pointer;
+      pointer-events: auto;
+      -webkit-tap-highlight-color: transparent;
+      filter: drop-shadow(0 7px 15px rgba(5, 3, 25, .38));
+      transition: transform .15s ease, filter .15s ease;
+    }
+
+    .create-button:hover { filter: brightness(1.08) drop-shadow(0 7px 15px rgba(5,3,25,.38)); }
+    .create-button:active { transform: translate(-50%, -50%) scale(.93); }
+    .create-button:focus-visible { outline: 3px solid #fff; outline-offset: 5px; }
+
+    .create-button svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    /* Even-odd SVG path: the plus is a true transparent hole. */
+    .create-button path {
+      fill: url(#createGradient);
+      fill-rule: evenodd;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 19px;
+      letter-spacing: -.35px;
+    }
+
+    .section-heading a {
+      color: var(--link-color);
+      font-size: 12px;
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    .extra-section { margin-top: 24px; }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .quick-item {
+      min-height: 112px;
+      padding: 15px;
+      border: 1px solid var(--surface-soft-border);
+      border-radius: 18px;
+      background: var(--surface-soft);
+    }
+
+    .quick-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      color: var(--icon-tint);
+      background: rgba(205,157,255,.17);
+    }
+
+    .quick-icon svg {
+      width: 19px;
+      height: 19px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .quick-item strong { display: block; font-size: 13px; }
+    .quick-item small {
+      display: block;
+      margin-top: 4px;
+      color: var(--text-soft);
+      font-size: 11px;
+    }
+
+    .activity-list { display: grid; gap: 0; }
+
+    .activity-row {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 14px 0;
+      border-top: 1px solid var(--activity-divider);
+    }
+
+    .activity-row:first-child { border-top: 0; padding-top: 0; }
+    .activity-row:last-child { padding-bottom: 0; }
+
+    .activity-dot {
+      flex: 0 0 10px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #d99bff;
+      box-shadow: 0 0 14px rgba(217,155,255,.65);
+    }
+
+    .activity-copy { min-width: 0; flex: 1; }
+    .activity-copy strong { display: block; font-size: 13px; }
+    .activity-copy small {
+      display: block;
+      margin-top: 4px;
+      color: var(--text-soft);
+      font-size: 11px;
+    }
+
+    .activity-time {
+      color: var(--text-soft);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .feature-card {
+      background: linear-gradient(135deg, rgba(159,104,239,.30), rgba(255,255,255,.07));
+    }
+
+    .feature-card h2 { margin: 0 0 9px; font-size: 20px; }
+    .feature-card p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 2100;
+      left: 50%;
+      bottom: calc(82px + 14px + env(safe-area-inset-bottom));
+      transform: translate(-50%, 12px);
+      width: max-content;
+      max-width: calc(100% - 36px);
+      padding: 12px 16px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 14px;
+      color: #fff;
+      background: rgba(19, 15, 43, .92);
+      box-shadow: 0 12px 35px rgba(0,0,0,.25);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @media (min-width: 700px) {
+      main { margin-top: 100px; }
+      .bottom-nav-wrap {
+        --bar-height: 74px;
+        --disc-size: 66px;
+        --notch-size: 82px;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .bottom-nav-wrap {
+        --bar-height: 70px;
+        --disc-size: 66px;
+        --notch-size: 82px;
+      }
+      .nav-item span { font-size: 9px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 12 12 4l8 8M6.5 10.5V20h11v-9.5M10 20v-6h4v6"/>
+          </svg>
+        </span>
+        <span>Gradient UI</span>
+      </div>
+      <div class="header-actions">
+      <button class="theme-toggle" type="button" id="themeToggle" aria-label="Switch to light mode" aria-pressed="false" title="Switch to light mode">
+        <svg id="themeIcon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path>
+        </svg>
+      </button>
+      <button class="top-action" type="button" aria-label="More options" id="moreButton">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/>
+        </svg>
+      </button>
+      </div>
+    </header>
+
+  <div class="app">
+<main>
+      <p class="eyebrow" id="eyebrow">Your space, simplified</p>
+      <h1 id="heading">Everything in one place.</h1>
+      <p class="intro" id="intro">
+        A clean, colourful starting point with five easy-to-reach navigation actions.
+        Use the centre button for your primary action.
+      </p>
+
+      <section class="content-card" aria-label="Overview">
+        <div class="card-top">
+          <div>
+            <p class="card-label" id="cardLabel">Weekly overview</p>
+            <p class="card-value" id="cardValue">Good morning</p>
+          </div>
+          <span class="trend">+12.8%</span>
+        </div>
+        <div class="bars" aria-hidden="true">
+          <span style="--h:35%"></span>
+          <span style="--h:55%"></span>
+          <span style="--h:43%"></span>
+          <span style="--h:72%"></span>
+          <span style="--h:60%"></span>
+          <span style="--h:88%"></span>
+          <span style="--h:76%"></span>
+          <span style="--h:100%"></span>
+          <span style="--h:68%"></span>
+          <span style="--h:83%"></span>
+        </div>
+      </section>
+
+      <section class="content-card extra-section" aria-labelledby="quickTitle">
+        <div class="section-heading">
+          <h2 id="quickTitle">Quick access</h2>
+          <a href="#recentActivity">View activity</a>
+        </div>
+        <div class="quick-grid">
+          <article class="quick-item">
+            <span class="quick-icon">
+              <svg viewBox="0 0 24 24"><path d="M4 19V5m0 14h16M7 15l4-4 3 2 5-6"/></svg>
+            </span>
+            <strong>Analytics</strong>
+            <small>Review your progress</small>
+          </article>
+          <article class="quick-item">
+            <span class="quick-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/></svg>
+            </span>
+            <strong>New item</strong>
+            <small>Create something new</small>
+          </article>
+          <article class="quick-item">
+            <span class="quick-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            </span>
+            <strong>History</strong>
+            <small>See recent changes</small>
+          </article>
+          <article class="quick-item">
+            <span class="quick-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 3 4 7v5c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7z"/><path d="m9 12 2 2 4-4"/></svg>
+            </span>
+            <strong>Security</strong>
+            <small>Manage your account</small>
+          </article>
+        </div>
+      </section>
+
+      <section class="content-card extra-section" id="recentActivity" aria-labelledby="recentTitle">
+        <div class="section-heading">
+          <h2 id="recentTitle">Recent activity</h2>
+          <a href="#updates">See all</a>
+        </div>
+        <div class="activity-list">
+          <div class="activity-row">
+            <span class="activity-dot"></span>
+            <div class="activity-copy">
+              <strong>Welcome to your dashboard</strong>
+              <small>Your space is ready to use</small>
+            </div>
+            <time class="activity-time">Now</time>
+          </div>
+          <div class="activity-row">
+            <span class="activity-dot"></span>
+            <div class="activity-copy">
+              <strong>Profile is up to date</strong>
+              <small>Your account details are saved</small>
+            </div>
+            <time class="activity-time">Today</time>
+          </div>
+          <div class="activity-row">
+            <span class="activity-dot"></span>
+            <div class="activity-copy">
+              <strong>New features are available</strong>
+              <small>Explore the quick access shortcuts</small>
+            </div>
+            <time class="activity-time">Yesterday</time>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-card extra-section feature-card" id="updates">
+        <h2>More to explore</h2>
+        <p>This section adds enough page content to demonstrate vertical scrolling. The bottom navigation stays fixed, while the background remains visible through the circular notch and the plus-shaped cutout.</p>
+      </section>
+    </main>
+
+  </div>
+
+  <div class="bottom-nav-wrap">
+      <nav class="bottom-nav" aria-label="Bottom navigation">
+        <button class="nav-item active" type="button" data-tab="Home" aria-current="page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
+          <span>Home</span>
+        </button>
+
+        <button class="nav-item" type="button" data-tab="Explore">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7.5"/><path d="m16.5 16.5 4 4M11 7.5v7M7.5 11h7"/></svg>
+          <span>Explore</span>
+        </button>
+
+        <div class="tab-spacer" aria-hidden="true"></div>
+
+        <button class="nav-item" type="button" data-tab="Activity">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.2-6 4.1 12 2.2-6H21"/></svg>
+          <span>Activity</span>
+        </button>
+
+        <button class="nav-item" type="button" data-tab="Profile">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.7-3.3 3.1-5 7-5s6.3 1.7 7 5"/></svg>
+          <span>Profile</span>
+        </button>
+      </nav>
+
+      <!-- Floating FAB is outside the masked tab bar. -->
+      <button class="create-button" type="button" id="createButton" aria-label="Create new">
+        <svg viewBox="0 0 100 100" role="img" aria-label="Purple circle with transparent plus cutout" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="createGradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#a46bfa"/>
+              <stop offset="1" stop-color="#6538c5"/>
+            </linearGradient>
+          </defs>
+          <path d="
+            M 50 0
+            A 50 50 0 1 1 50 100
+            A 50 50 0 1 1 50 0 Z
+
+            M 43 22
+            H 57
+            V 43
+            H 78
+            V 57
+            H 57
+            V 78
+            H 43
+            V 57
+            H 22
+            V 43
+            H 43
+            Z
+          "/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+
+    const themeToggle = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+
+    const sunIcon = `
+      <circle cx="12" cy="12" r="4"></circle>
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path>
+    `;
+    const moonIcon = `
+      <path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8 8.7 8.7 0 1 0 20.2 15.1Z"></path>
+    `;
+
+    function applyTheme(theme, persist = true) {
+      const isLight = theme === "light";
+      document.documentElement.dataset.theme = isLight ? "light" : "dark";
+      document.documentElement.style.colorScheme = isLight ? "light" : "dark";
+      themeIcon.innerHTML = isLight ? moonIcon : sunIcon;
+      themeToggle.setAttribute("aria-pressed", String(isLight));
+      const label = isLight ? "Switch to dark mode" : "Switch to light mode";
+      themeToggle.setAttribute("aria-label", label);
+      themeToggle.setAttribute("title", label);
+      if (themeMeta) themeMeta.setAttribute("content", isLight ? "#f4efff" : "#17142f");
+
+      if (persist) {
+        try {
+          localStorage.setItem("gradient-ui-theme", isLight ? "light" : "dark");
+        } catch (error) {
+          // Theme remains active for the current page if storage is unavailable.
+        }
+      }
+    }
+
+    let savedTheme = "dark";
+    try {
+      const storedTheme = localStorage.getItem("gradient-ui-theme");
+      if (storedTheme === "light" || storedTheme === "dark") savedTheme = storedTheme;
+    } catch (error) {
+      // Use the default dark theme when storage is unavailable.
+    }
+    applyTheme(savedTheme, false);
+
+    themeToggle.addEventListener("click", () => {
+      const currentTheme = document.documentElement.dataset.theme || "dark";
+      applyTheme(currentTheme === "dark" ? "light" : "dark");
+      showToast(currentTheme === "dark" ? "Light mode enabled" : "Dark mode enabled");
+    });
+
+
+    const tabContent = {
+      Home: {
+        eyebrow: "Your space, simplified",
+        heading: "Everything in one place.",
+        intro: "A clean, colourful starting point with five easy-to-reach navigation actions. Use the centre button for your primary action.",
+        label: "Weekly overview",
+        value: "Good morning"
+      },
+      Explore: {
+        eyebrow: "Find something new",
+        heading: "Explore your world.",
+        intro: "Discover new ideas, useful shortcuts and things worth coming back to.",
+        label: "Discover",
+        value: "Made for you"
+      },
+      Activity: {
+        eyebrow: "Stay up to date",
+        heading: "Your activity.",
+        intro: "Keep track of recent updates and the things happening in your space.",
+        label: "Recent activity",
+        value: "All caught up"
+      },
+      Profile: {
+        eyebrow: "Your account",
+        heading: "Make it yours.",
+        intro: "Your profile, preferences and personal settings in one convenient place.",
+        label: "Account status",
+        value: "Looking good"
+      }
+    };
+
+    const toast = document.getElementById("toast");
+    let toastTimer;
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2100);
+    }
+
+    document.querySelectorAll(".nav-item").forEach((button) => {
+      button.addEventListener("click", () => {
+        const tab = button.dataset.tab;
+        const content = tabContent[tab];
+
+        document.querySelectorAll(".nav-item").forEach((item) => {
+          item.classList.toggle("active", item === button);
+          if (item === button) item.setAttribute("aria-current", "page");
+          else item.removeAttribute("aria-current");
+        });
+
+        document.getElementById("eyebrow").textContent = content.eyebrow;
+        document.getElementById("heading").textContent = content.heading;
+        document.getElementById("intro").textContent = content.intro;
+        document.getElementById("cardLabel").textContent = content.label;
+        document.getElementById("cardValue").textContent = content.value;
+      });
+    });
+
+    document.getElementById("createButton").addEventListener("click", () => {
+      showToast("Create action selected");
+    });
+
+    document.getElementById("moreButton").addEventListener("click", () => {
+      showToast("More options selected");
+    });
+  </script>
+</body>
+</html>
